@@ -1,0 +1,23 @@
+{
+  "name": "anohen",
+  "version": "1.0.0",
+  "description": "chat system",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gyosib/anohen.git"
+  },
+  "author": "shouta",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gyosib/anohen/issues"
+  },
+  "homepage": "https://github.com/gyosib/anohen#readme",
+  "dependencies": {
+    "express": "^4.14.0",
+    "socket.io": "^1.4.8"
+  }
+}

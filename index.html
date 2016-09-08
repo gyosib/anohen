@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<head>
+	<meta charset='UTF-8'>
+	<title>node test</title>
+</head>
+<body>
+	<input type="text"></input>
+	<input type="button" value="send"/>
+	<img src="git.png">
+	
+<script type='text/javascript' src='https://cdn.socket.io/socket.io-1.0.0.js'></script>
+<!-- script src='/node_modules/socket.io/lib/socket.js'></script-->
+<script type='text/javascript'>
+var socketio = io.connect('http://localhost:8124');
+socketio.on('connect',function(){});
+
+socketio.on('publish',function(data){console.log(data)});
+
+function start(name){
+	socketio.emit("connected",name);
+	console.log(name);
+}
+
+start("test");
+</script>
+</body>
+</html>
