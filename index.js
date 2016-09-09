@@ -1,17 +1,26 @@
 var http = require("http");
 var socketio = require("socket.io");
 var fs = require("fs");
- 
-var server = http.createServer(function(req, res) {
+var express = require("express");
+var app = express();
+
+/*var server = http.createServer(function(req, res) {
      res.writeHead(200, {"Content-Type":"text/html"});
      var output = fs.readFileSync("./index.html", "utf-8");
      res.end(output);
-}).listen(process.env.VMC_APP_PORT || 3000);
- 
+     readfile(req,res,"html","index.html");
+}).listen(process.env.VMC_APP_PORT || 3000);*/
+var server = http.createServer(app);
+server.listen(3000);
+app.get('/',function(req,res){
+	res.sendfile(__dirname+'/index.html');
+});
+
+app.use('/send',express.static('send'));
+
 var io = socketio.listen(server);
  
 io.sockets.on("connection", function (socket) {
- 
   // メッセージ送信（送信者にも送られる）
   socket.on("C_to_S_message", function (data) {
     io.sockets.emit("S_to_C_message", {value:data.value});
@@ -27,3 +36,9 @@ io.sockets.on("connection", function (socket) {
 //    io.sockets.emit("S_to_C_message", {value:"user disconnected"});
   });
 });
+
+function readfile(req,res,type,name){
+     res.writeHead(200, {"Content-Type":"text/"+type});
+     var output = fs.readFileSync("./"+name, "utf-8");
+     res.end(output);
+}
