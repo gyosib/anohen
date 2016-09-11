@@ -5,12 +5,20 @@
 <div id="map" style="width:400px; height:300px"></div>
 
 <script type="text/javascript" charset="utf-8" src="http://js.api.olp.yahooapis.jp/OpenLocalPlatform/V1/jsapi?appid=dj0zaiZpPVJHakJrSDFTQUd1aSZzPWNvbnN1bWVyc2VjcmV0Jng9NGY-"></script>
+<script src="//code.jquery.com/jquery-3.1.0.min.js"></script>
 <script type="text/javascript">
-window.onload = function(){
+$(function(){
     var ymap = new Y.Map("map");
-    ymap.drawMap(new Y.LatLng(35.66572, 139.73100), 17, Y.LayerSetId.NORMAL);
-}
-
+    console.log("ymap");
+    navigator.geolocation.watchPosition(
+	function(position){
+		console.log(position);
+    		var gx = position.coords.longitude;
+    		var gy = position.coords.latitude;
+		console.log(gx);
+    		ymap.drawMap(new Y.LatLng(gx, gy), 17, Y.LayerSetId.NORMAL);
+	});
+});
 </script>
 </body>
 </html>
