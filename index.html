@@ -1,71 +1,26 @@
-
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44
-45
-46
-47
-48
-49
-50
-51
-52
-53
-54
-55
-56
-57
 <!DOCTYPE HTML>
 <html>
 <head>
   <meta charset="UTF-8">
   <title>node.js chat</title>
-  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+  <a id='send'>send</a>
+  <div id="msg_list" style="height:300px; overflow:auto;"></div>
+  <form action="" method="post" onsubmit="return false;">
+    <input type="text" class="text" style="width:95%; padding:10px" id="message"/>
+    <input type="submit" class="button" style="padding:10px" onclick="sendMessage();" value="みんなに送信" />
+    <input type="submit" class="button" style="padding:10px" onclick="sendBroadcast();" value="自分以外に送信" />
+  </form>
+</div>
   <script type="text/javascript">
- 
+  var IP = '192.168.0.2';
+  var HTTP_PORT = '3000'; 
+  var HTTPS_PORT = '3100'; 
 //  var s = io.connect(); //リモート
-  var s = io.connect('http://192.168.0.2:3000'); //ローカル
+  var s = io.connect('http://'+IP+':'+HTTP_PORT); //ローカル
  
   //サーバから受け取るイベント
   s.on("connect", function () {});  // 接続時
@@ -74,6 +29,9 @@
     addMessage(data.value);
   });
  
+  $('#send').on('click',function(){
+ 	window.open('https://'+IP+':'+HTTPS_PORT+"/send/get_gps.html");
+  });
   //クライアントからイベント送信（イベント名は自由に設定できます）
   function sendMessage() {
     var msg = $("#message").val(); //取得
@@ -101,15 +59,5 @@
       padding:0;
     }
   </style>
-</head>
-<body>
-  <a href='send/send.html'>send</a>
-  <div id="msg_list" style="height:300px; overflow:auto;"></div>
-  <form action="" method="post" onsubmit="return false;">
-    <input type="text" class="text" style="width:95%; padding:10px" id="message"/>
-    <input type="submit" class="button" style="padding:10px" onclick="sendMessage();" value="みんなに送信" />
-    <input type="submit" class="button" style="padding:10px" onclick="sendBroadcast();" value="自分以外に送信" />
-  </form>
-</div>
 </body>
 </html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<head>
+</head>
+<body>
+
+<script src="//code.jquery.com/jquery-3.1.0.min.js"></script>
+<script src="js/jquery.cookie.js" type="text/javascript"></script>
+<script type="text/javascript">
+$(function(){
+	var IP = "192.168.0.2";
+	var PORT = 3000;
+    navigator.geolocation.watchPosition(
+	function(position){
+		console.log(position);
+    		var gx = position.coords.longitude;
+    		var gy = position.coords.latitude;
+			$.cookie("gps_x",gx);
+			$.cookie("gps_y",gy);
+			window.open("http://"+IP+":"+PORT+"/send/send.html");
+			window.close();
+	});
+});
+</script>
+</body>
+</html>
+

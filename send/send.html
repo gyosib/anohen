@@ -10,14 +10,14 @@
 $(function(){
     var ymap = new Y.Map("map");
     console.log("ymap");
-    navigator.geolocation.watchPosition(
 	function(position){
 		console.log(position);
-    		var gx = position.coords.longitude;
-    		var gy = position.coords.latitude;
-		console.log(gx);
-    		ymap.drawMap(new Y.LatLng(gx, gy), 17, Y.LayerSetId.NORMAL);
-	});
+    	if($.cookie("gps_x")){
+			var gx = $.cookie("gps_x");
+			var gy = $.cookie("gps_y");
+			ymap.drawMap(new Y.LatLng(gx, gy), 17, Y.LayerSetId.NORMAL);
+		}
+	};
 });
 </script>
 </body>
