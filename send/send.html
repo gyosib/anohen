@@ -5,20 +5,70 @@
 <div id="map" style="width:400px; height:300px"></div>
 
 <script type="text/javascript" charset="utf-8" src="http://js.api.olp.yahooapis.jp/OpenLocalPlatform/V1/jsapi?appid=dj0zaiZpPVJHakJrSDFTQUd1aSZzPWNvbnN1bWVyc2VjcmV0Jng9NGY-"></script>
-<script src="//code.jquery.com/jquery-3.1.0.min.js"></script>
+<script src="../plugin/jquery-3.1.0.min.js"></script>
+<script src="../plugin/jquery-cookie/src/jquery.cookie.js"></script>
 <script type="text/javascript">
 $(function(){
-    var ymap = new Y.Map("map");
+	var ymap = new Y.Map("map");
+    //window.addEventListener("deviceorientation",deviceorientationHandler(ymap(ymap)));
     console.log("ymap");
-	function(position){
-		console.log(position);
-    	if($.cookie("gps_x")){
-			var gx = $.cookie("gps_x");
-			var gy = $.cookie("gps_y");
-			ymap.drawMap(new Y.LatLng(gx, gy), 17, Y.LayerSetId.NORMAL);
-		}
-	};
+   	if($.cookie("gps_x")){
+		var gx = $.cookie("gps_x");
+		var gy = $.cookie("gps_y");
+		console.log(gx);
+		console.log(gy);
+		ymap.drawMap(new Y.LatLng(gy, gx), 17, Y.LayerSetId.NORMAL);
+		var strokeStyle = new Y.Style("00ff00",4,0.7);
+		var fillStyle = new Y.Style("00ff00",null,0.2);
+		var circle = new Y.Circle(
+			new Y.LatLng(gy,gx),
+			new Y.Size(0.01,0.01),
+			{unit:"km",strokeStyle:strokeStyle,fillStyle:fillStyle}
+		);
+		/*var latings = [
+			new Y.LatLng(gy,gx),
+			new Y.LatLng(gy+,gx),
+			new Y.LatLng(gy,gx)
+		];*/
+
+		ymap.addFeature(circle);
+	}
 });
+
+function deviceorientationHandler(event,map) {
+   	//Axis
+	var beta = event.beta; //x
+  	var gamma = event.gamma; //y
+   	var alpha = event.alpha; //z
+   	
+	//Direction
+	var compassHeading = getCompassHeading(alpha, beta, gamma);
+   	var direction = 360 - compassHeading;
+
+	
+}
+
+function getCompassHeading(alpha, beta, gamma) {
+	//Get Direction from axis data
+	var degtorad = Math.PI / 180;
+   	var _x = beta ? beta * degtorad : 0;
+   	var _y = gamma ? gamma * degtorad : 0;
+   	var _z = alpha ? alpha * degtorad : 0;
+   	var cY = Math.cos(_y);
+   	var cZ = Math.cos(_z);
+	var sX = Math.sin(_x);
+ 	var sY = Math.sin(_y);
+   	var sZ = Math.sin(_z);
+   	var Vx = -cZ * sY - sZ * sX * cY;
+   	var Vy = -sZ * sY + cZ * sX * cY;
+   	var compassHeading = Math.atan(Vx / Vy);
+   	if (Vy < 0) {
+      	compassHeading += Math.PI;
+	}else if (Vx < 0){
+		compassHeading += 2 * Math.PI;
+	}
+	return compassHeading * ( 180 / Math.PI );
+}
 </script>
 </body>
 </html>

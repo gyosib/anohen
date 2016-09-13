@@ -2,23 +2,34 @@
 <head>
 </head>
 <body>
+ページが空白の場合は、お使いのブラウザ・端末ではご使用できない可能性があります。
+<p>また、位置情報が有効かを確認してください。</p>
 
 <script src="//code.jquery.com/jquery-3.1.0.min.js"></script>
-<script src="js/jquery.cookie.js" type="text/javascript"></script>
+<script src="../plugin/jquery-cookie/src/jquery.cookie.js" type="text/javascript"></script>
 <script type="text/javascript">
 $(function(){
 	var IP = "192.168.0.2";
 	var PORT = 3000;
-    navigator.geolocation.watchPosition(
-	function(position){
-		console.log(position);
-    		var gx = position.coords.longitude;
+	alert("You could access this page!");
+	console.log(IP);
+    if(navigator.geolocation){
+		navigator.geolocation.watchPosition(
+			function(position){
+			console.log(position);
+			alert("I'm getting your location");
+   	 		var gx = position.coords.longitude;
     		var gy = position.coords.latitude;
 			$.cookie("gps_x",gx);
 			$.cookie("gps_y",gy);
-			window.open("http://"+IP+":"+PORT+"/send/send.html");
-			window.close();
-	});
+			alert("your location is "+gx+","+gy);
+			window.location.href = "http://"+IP+":"+PORT+"/send/send.html";
+			//window.close();
+		});
+	}else{
+			alert("位置情報を取得できません。"+
+				"ブラウザ・端末・位置情報が有効かを確認してください");
+	}
 });
 </script>
 </body>

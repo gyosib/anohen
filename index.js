@@ -51,6 +51,8 @@ app.get('/',function(req,res){
 
 app.use('/send',express.static('send'));
 apps.use('/send',express.static('send'));
+app.use('/plugin',express.static('plugin'));
+apps.use('/plugin',express.static('plugin'));
 
 var io = socketio.listen(server);
  
