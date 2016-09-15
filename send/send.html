@@ -9,17 +9,24 @@
 <script src="../plugin/jquery-cookie/src/jquery.cookie.js"></script>
 <script type="text/javascript">
 $(function(){
-	var ymap = new Y.Map("map");
-    //window.addEventListener("deviceorientation",deviceorientationHandler(ymap(ymap)));
-    console.log("ymap");
+	tri = 1; //if tri=1 then draw map
+    //drawmap(289);
+	ymap = new Y.Map("map");
+	window.addEventListener("deviceorientation",deviceorientationHandler);
+});
+
+function drawmap(direction){
    	if($.cookie("gps_x")){
 		var gx = +$.cookie("gps_x");
 		var gy = +$.cookie("gps_y");
-		var dis = 280; //N:0 E:90
+		var dis = direction; //N:0 E:90
 		var range = 60;
 		console.log(gx);
 		console.log(gy);
-		ymap.drawMap(new Y.LatLng(gy, gx), 17, Y.LayerSetId.NORMAL);
+		if(tri == 1){
+			ymap.drawMap(new Y.LatLng(gy, gx), 17, Y.LayerSetId.NORMAL);
+			tri = 0;
+		}
 		var strokeStyle = new Y.Style("00ff00",4,0.7);
 		var fillStyle = new Y.Style("00ff00",null,0.2);
 		var circle = new Y.Circle(
@@ -43,25 +50,26 @@ $(function(){
 		];
 		var polyline = new Y.Polygon(latlngs, {
 			strokeStyle: strokeStyle,fillStyle: fillStyle});
-		/*var latings = [
-			new Y.LatLng(gy,gx),
-			new Y.LatLng(gy+,gx),
-			new Y.LatLng(gy,gx)
-		];*/
 		ymap.addFeature(circle);
 		ymap.addFeature(polyline);
+		window.setTimeout(function(){
+			ymap.removeFeature(circle);
+			ymap.removeFeature(polyline);
+		},200);
 	}
-});
+}	
 
-function deviceorientationHandler(event,map) {
+function deviceorientationHandler(event) {
    	//Axis
 	var beta = event.beta; //x
   	var gamma = event.gamma; //y
    	var alpha = event.alpha; //z
    	
 	//Direction
+	//var compassHeading = getCompassHeading(alpha, beta, gamma);
 	var compassHeading = getCompassHeading(alpha, beta, gamma);
    	var direction = 360 - compassHeading;
+	drawmap(alpha);
 }
 
 function getCompassHeading(alpha, beta, gamma) {
@@ -88,16 +96,15 @@ function getCompassHeading(alpha, beta, gamma) {
 
 function cir_mapx(r,theta,gx){
 	//r[m] , theta[do](N:0 E:90 S:180 W:270)
-	var disx = r/90000*Math.cos(-1*(theta-90)/180*Math.PI)+gx; //keido in do
+	var disx = r/90000*Math.cos((theta+90)/180*Math.PI)+gx; //keido in do
 	console.log(disx);
 	return disx;
 }
 function cir_mapy(r,theta,gy){
-	var disy = r/111000*Math.sin(-1*(theta-90)/180*Math.PI)+gy; //ido in do
+	var disy = r/111000*Math.sin((theta+90)/180*Math.PI)+gy; //ido in do
 	console.log(disy);
 	return disy;
 }
 </script>
 </body>
 </html>
-
