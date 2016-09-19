@@ -3,16 +3,35 @@
 <title>Sending</title>
 <body>
 <div id="map" style="width:400px; height:300px"></div>
-
+<a id="send_lnk">send</a>
 <script type="text/javascript" charset="utf-8" src="http://js.api.olp.yahooapis.jp/OpenLocalPlatform/V1/jsapi?appid=dj0zaiZpPVJHakJrSDFTQUd1aSZzPWNvbnN1bWVyc2VjcmV0Jng9NGY-"></script>
 <script src="../plugin/jquery-3.1.0.min.js"></script>
 <script src="../plugin/jquery-cookie/src/jquery.cookie.js"></script>
+<script src="/socket.io/socket.io.js"></script>
 <script type="text/javascript">
 $(function(){
+	var IP = "192.168.0.5";
+	var HTTP_PORT = "3000";
+	var HTTPS_PORT = "3100";
+	
 	tri = 1; //if tri=1 then draw map
     //drawmap(289);
 	ymap = new Y.Map("map");
 	window.addEventListener("deviceorientation",deviceorientationHandler);
+
+	var mysql = require('mysql');
+	var s = io.connect('http://'+IP+':'+HTTP_PORT);
+	var client = mysql.createClient(
+		{user:'root',password:'Ss40mysql71132019'});
+});
+
+$('#send').on("click",function(){
+	var id = 0; //ID
+	var msg = "test"; //message
+	var x = 0.0001; //now location(x=keido)
+	var y = 0;      //now location(y=ido)
+	var dir = 0; //direction
+	s.emit("sendmsg",{id:id,msg:msg,gx:x,gy:y,dir:dir});
 });
 
 function drawmap(direction){
@@ -105,6 +124,8 @@ function cir_mapy(r,theta,gy){
 	console.log(disy);
 	return disy;
 }
+
+//function sendmsg(
 </script>
 </body>
 </html>
