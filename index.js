@@ -13,41 +13,83 @@ var app = express();
 var apps = express();
 var constants = require('constants');
 var mysql = require('mysql');
-var mongoose = require('mongoose');
+var mongoose_usr = require('mongoose');
+var mongoose_msg = require('mongoose');
 
 //MongoDB setting
-var MemoSchema = new mongoose.Schema({
-	name: String,
-	age: Number
+//**********
+var UsrSchema = new mongoose_usr.Schema({
+	id:Number,
+	name:String,
+	pass:String,
+	x:Number,
+	y:Number
+});
+var MsgSchema = new mongoose_msg.Schema({
+	id:Number,
+	date:Date,
+	who:String,
+	msg:String
 });
 
-var Memo = mongoose.model('learn',MemoSchema);
-mongoose.connect("mongodb://"+"localhost"+":27017/learn",function(err){
+mongoose_usr.Promise = global.Promise;
+mongoose_msg.Promise = global.Promise;
+var usrmode = mongoose_usr.createConnection("mongodb://"+"localhost"+":27017/usr",function(err){
 	if(err){
 		console.log(err);
 	}else{
 		console.log('connection success!');
 	}
 });
+var msgmode = mongoose_msg.createConnection("mongodb://"+"localhost"+":27017/msg",function(err){
+	if(err){
+		console.log(err);
+	}else{
+		console.log('connection success!');
+	}
+});
+var Usr = usrmode.model('usr',UsrSchema);
+var Msg = msgmode.model('test_user_',MsgSchema);
 
-Memo.find({},function(err,docs){
+var message = new Msg({
+	id:0,date:new Date(),who:"administractor",msg:"test"
+});
+/*message.id = 0;
+message.date = new Date();
+message.who = "administractor";
+message.msg = "test";*/
+//message.comments.push({title: 'comment title', body: 'comment body'});
+message.save(function(err){
+	if(err) { 
+		console.log(err);
+	}else{
+		console.log(message);
+	 }
+});
+Msg.find({},function(err,docs){
 	if(!err){
 		console.log("num of item =>"+docs.length);
 		for(var i=0;i<docs.length;i++){
 			console.log(docs[i]);
 		}
-		mongoose.disconnect();
+		mongoose_usr.disconnect();
 		process.exit();
 	}else{
 		console.log("find error");
 	}
 });
 
+mongoose_usr.disconnect();
+mongoose_msg.disconnect();
+
+//**********
+
 //MySQL setting
+/*
 var client = mysql.createConnection(
 	{user:'root',password:'Ss40mysql71132019'});
 client.query('USE'+" anohen;");
-
+*/
 		
 //Server Basic Setting
 //**********
@@ -114,6 +156,8 @@ function readfile(req,res,type,name){
 }
 
 //mysql request -> return x^2+y^2
+/*
 var accept = client.query("select x,y,x*x+y*y from users;",function(err,result){
 	//console.log(result);
 });
+*/
