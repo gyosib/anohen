@@ -59,7 +59,7 @@ message.date = new Date();
 message.who = "administractor";
 message.msg = "test";*/
 //message.comments.push({title: 'comment title', body: 'comment body'});
-message.save(function(err){
+/*message.save(function(err){
 	if(err) { 
 		console.log(err);
 	}else{
@@ -77,10 +77,8 @@ Msg.find({},function(err,docs){
 	}else{
 		console.log("find error");
 	}
-});
+});*/
 
-mongoose_usr.disconnect();
-mongoose_msg.disconnect();
 
 //**********
 
@@ -137,13 +135,42 @@ io.sockets.on("connection", function (socket) {
  
   // 切断したときに送信
   socket.on("disconnect", function () {
-//    io.sockets.emit("S_to_C_message", {value:"user disconnected"});
+	//    io.sockets.emit("S_to_C_message", {value:"user disconnected"});
+mongoose_usr.disconnect();
+mongoose_msg.disconnect();
   });
 
 	//When get sendmsg request
-	/*socket.on("sendmsg",function(){
-		accept;
-	});*/
+	socket.on("sendmsg",function(data){
+		//sending data
+		var r = data.r;
+		var dir = data.dir;
+		var theta = data.theta;
+		var x0 = data.x;
+		var y0 = data.y;
+		//Find
+		Usr.find({},function(err,docs){
+			for(var i=0;i<docs.length;i++){
+				var dx = 90000*(docs[i].x-x0);
+				var dy = 111000*(docs[i].y-y0);
+				var theta_db = Math.atan(dy/dx);
+				var r_db = dx/Math.cos(theta_db);
+				console.log(r);
+				console.log(theta);			
+				console.log(dir);
+				console.log(theta_db);
+				console.log(r_db);
+				if(
+					r_db <= r && 
+					theta_db >= (dir-theta/2) && 
+					theta_db <= (dir+theta/2)
+				){
+					console.log(docs[i]); //user data in range
+				}	
+			}
+		});
+		//function search_person(limr,limtheta,dir,x0,y0,x,y){
+	});
 });
 
 //**********
@@ -161,3 +188,19 @@ var accept = client.query("select x,y,x*x+y*y from users;",function(err,result){
 	//console.log(result);
 });
 */
+
+//range from x,y
+function search_person(limr,limtheta,dir,x0,y0,x,y){
+	//limr:max r limtheta:max range dir:direction x,y: 0:send -:accept
+	//dir[N:0 E:90 S:180 W:270]
+	var dx = x-x0;
+	var dy = y-y0;
+	var theta = Math.atan(dy/dx);
+	var r = dx/Math.cos(theta);
+	var limtheta_a = dir - limtheta / 2; //left
+	var limtheta_a = dir + limtheta / 2; //right
+	if(r <= limr && (limtheta_a <= theta && theta <= limtheta_b)){
+		return 1; //Effectiveness
+	}
+	return 0; //Invalid
+}
