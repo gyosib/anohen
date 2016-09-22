@@ -48,12 +48,12 @@ var msgmode = mongoose_msg.createConnection("mongodb://"+"localhost"+":27017/msg
 		console.log('connection success!');
 	}
 });
-var Usr = usrmode.model('usr',UsrSchema);
-var Msg = msgmode.model('test_user_',MsgSchema);
+//var Usr = usrmode.model('usr',UsrSchema);
+//var Msg = msgmode.model('test_user_',MsgSchema);
 
-var message = new Msg({
+/*var message = new Msg({
 	id:0,date:new Date(),who:"administractor",msg:"test"
-});
+});*/
 /*message.id = 0;
 message.date = new Date();
 message.who = "administractor";
@@ -114,6 +114,8 @@ app.use('/send',express.static('send'));
 apps.use('/send',express.static('send'));
 app.use('/plugin',express.static('plugin'));
 apps.use('/plugin',express.static('plugin'));
+app.use('/box',express.static('box'));
+apps.use('/box',express.static('box'));
 
 //**********
 
@@ -136,8 +138,8 @@ io.sockets.on("connection", function (socket) {
   // 切断したときに送信
   socket.on("disconnect", function () {
 	//    io.sockets.emit("S_to_C_message", {value:"user disconnected"});
-mongoose_usr.disconnect();
-mongoose_msg.disconnect();
+	mongoose_usr.disconnect();
+	mongoose_msg.disconnect();
   });
 
 	//When get sendmsg request
@@ -165,11 +167,34 @@ mongoose_msg.disconnect();
 					theta_db >= (dir-theta/2) && 
 					theta_db <= (dir+theta/2)
 				){
-					console.log(docs[i]); //user data in range
+					console.log(docs[i].name); //user data in range
+					var Msg_foru = msgmode.model(docs[i].name,MsgSchema);
+					var message = new Msg({
+						id:0,date:new Date(),who:"administractor",msg:"test"
+					});
+					message.save(function(err){
+						if(err) { 
+							console.log(err);
+						}else{
+							console.log('success send');
+						}
+					});
 				}	
 			}
 		});
-		//function search_person(limr,limtheta,dir,x0,y0,x,y){
+	});
+
+	socket.on("loadmsg",function(data){
+		console.log("loadmsg");
+		var Msg = msgmode.model(data.name,MsgSchema);
+		Msg.find({},function(err,docs){
+			if(err){
+				console.log(err);
+			}else{
+				console.log(docs);
+				io.sockets.emit("loadmsg",docs);
+			}
+		});
 	});
 });
 
